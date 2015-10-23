@@ -1,39 +1,23 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <stdio.h>
+#include "movimento.c"
 using namespace std;
 
-#define tUP 0
-#define tDOWN 1
-#define tLEFT 2
-#define tRIGHT 3
-#define SPEED 10
-
-const int LARGURA_TELA = 640;
-const int ALTURA_TELA = 480;
+const int LARGURA_TELA = 840;
+const int ALTURA_TELA = 640;
 
 ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_BITMAP *imagem = NULL;
 ALLEGRO_BITMAP *fundo = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 
+//Vetor que controla quais direções estão sendo precionadas
 bool move[4];
+//Matriz do mapa (Considerando 40 px/célula)
+bool paredes[ALTURA_TELA / 40][LARGURA_TELA / 40];
 
 int inicializar();
-
-void teclas(int keycode, bool estado){
-  if(keycode == ALLEGRO_KEY_UP) move[tUP] = estado;
-  if(keycode == ALLEGRO_KEY_DOWN) move[tDOWN] = estado;
-  if(keycode == ALLEGRO_KEY_LEFT) move[tLEFT] = estado;
-  if(keycode == ALLEGRO_KEY_RIGHT) move[tRIGHT] = estado;
-}
-
-void atualiza(int &x, int &y){
-  if(move[tUP]) y -= SPEED;
-  if(move[tDOWN]) y += SPEED;
-  if(move[tLEFT]) x -= SPEED;
-  if(move[tRIGHT]) x += SPEED;
-}
 
 int main(void){
   bool sair = false;
@@ -47,11 +31,11 @@ int main(void){
     while(!al_is_event_queue_empty(fila_eventos)){
       ALLEGRO_EVENT evento;
       al_wait_for_event(fila_eventos, &evento);
-      if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(evento.keyboard.keycode, true);
-      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(evento.keyboard.keycode, false);
+      if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(move, evento.keyboard.keycode, true);
+      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(move, evento.keyboard.keycode, false);
       else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
     }
-    atualiza(x, y);
+    atualiza(move, x, y);
     al_draw_bitmap(fundo, 0, 0, 0);
     al_draw_bitmap(imagem, x, y, 0);
     al_flip_display();
@@ -69,8 +53,8 @@ int inicializar(){
   if (!al_install_keyboard()){ fprintf(stderr, "Falha ao inicializar o teclado.\n"); return false; }
 
   janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-  imagem = al_load_bitmap("bb-1.png");
-  fundo = al_load_bitmap("bb.jpg");
+  imagem = al_load_bitmap("assets/bman.png");
+  fundo = al_load_bitmap("assets/bb.jpg");
   fila_eventos = al_create_event_queue();
 
   for(int i = 0; i < 4; i++) move[i] = false;
