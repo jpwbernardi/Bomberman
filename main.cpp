@@ -1,7 +1,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <stdio.h>
-#include "movimento.c"
+#include "movimento.cpp"
 using namespace std;
 
 const int LARGURA_TELA = 840;
