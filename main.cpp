@@ -1,0 +1,81 @@
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+#include <stdio.h>
+using namespace std;
+
+const int LARGURA_TELA = 640;
+const int ALTURA_TELA = 480;
+
+ALLEGRO_DISPLAY *janela = NULL;
+ALLEGRO_BITMAP *imagem = NULL;
+ALLEGRO_BITMAP *fundo = NULL;
+ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
+
+int inicializar();
+
+int main(void){
+  bool sair = false;
+  int x = 0, y = 0;
+
+  if (!inicializar()) return 0;
+
+  al_draw_bitmap(fundo, 0, 0, 0);
+
+  while (!sair){
+    while(!al_is_event_queue_empty(fila_eventos)){
+      ALLEGRO_EVENT evento;
+      al_wait_for_event(fila_eventos, &evento);
+
+      if (evento.type == ALLEGRO_EVENT_KEY_DOWN){
+        switch(evento.keyboard.keycode){
+          case ALLEGRO_KEY_UP:
+            y -= 50;
+            break;
+          case ALLEGRO_KEY_DOWN:
+            y += 50;
+            break;
+          case ALLEGRO_KEY_LEFT:
+            x -= 50;
+            break;
+          case ALLEGRO_KEY_RIGHT:
+            x += 50;
+            break;
+        }
+      }
+      if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
+    }
+    al_draw_bitmap(fundo, 0, 0, 0);
+    al_draw_bitmap(imagem, x, y, 0);
+    al_flip_display();
+  }
+
+  al_destroy_display(janela);
+  al_destroy_event_queue(fila_eventos);
+
+  return 0;
+}
+
+int inicializar(){
+  if (!al_init()){ fprintf(stderr, "Falha ao inicializar a Allegro.\n");  return 0; }
+  if (!al_init_image_addon()){ fprintf(stderr, "Falha ao inicializar add-on allegro_image.\n"); return 0; }
+  if (!al_install_keyboard()){ fprintf(stderr, "Falha ao inicializar o teclado.\n"); return false; }
+
+  janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+  imagem = al_load_bitmap("bb-1.png");
+  fundo = al_load_bitmap("bb.jpg");
+  fila_eventos = al_create_event_queue();
+
+  if (!janela){ fprintf(stderr, "Falha ao criar janela.\n"); return 0; }
+  if (!imagem || !fundo){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
+  if (!fila_eventos){ fprintf(stderr, "Falha ao criar fila de eventos.\n"); al_destroy_display(janela); return 0; }
+
+  al_set_window_title(janela, "Bomberman");
+  al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+  al_draw_bitmap(imagem, 0, 0, 0);
+  al_flip_display();
+
+  al_register_event_source(fila_eventos, al_get_keyboard_event_source());
+  al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+
+  return 1;
+}
