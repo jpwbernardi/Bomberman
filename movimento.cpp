@@ -8,9 +8,9 @@ void teclas(bool move[], int keycode, bool estado){
   if(keycode == ALLEGRO_KEY_RIGHT) move[tRIGHT] = estado;
 }
 
-void atualiza(bool move[], int &x, int &y){
-  if(move[tUP]) y -= SPEED;
-  if(move[tDOWN]) y += SPEED;
-  if(move[tLEFT]) x -= SPEED;
-  if(move[tRIGHT]) x += SPEED;
+void atualiza(player_t &p, bool paredes[17][21]){
+  if(p.move[tUP] && p.y >= SPEED && !paredes[(p.y - SPEED) / DIV][p.x / DIV]) p.y -= SPEED;
+  if(p.move[tDOWN] && p.y + ALTURA_PLAYER <= ALTURA_TELA && !paredes[(p.y + ALTURA_PLAYER) / DIV][p.x / DIV]) p.y += SPEED;
+  if(p.move[tLEFT] && p.x >= SPEED && !paredes[p.y / DIV][(p.x - SPEED) / DIV]) p.x -= SPEED;
+  if(p.move[tRIGHT] && p.x + LARGURA_PLAYER <= LARGURA_TELA && !paredes[p.y / DIV][(p.x + LARGURA_PLAYER) / DIV]) p.x += SPEED;
 }

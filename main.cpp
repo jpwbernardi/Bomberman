@@ -1,27 +1,26 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <stdio.h>
+#include <string.h>
 #include "movimento.cpp"
 using namespace std;
-
-const int LARGURA_TELA = 840;
-const int ALTURA_TELA = 640;
 
 ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_BITMAP *imagem = NULL;
 ALLEGRO_BITMAP *fundo = NULL;
+ALLEGRO_BITMAP *parede = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 
-//Vetor que controla quais direções estão sendo precionadas
-bool move[4];
-//Matriz do mapa (Considerando 40 px/célula)
-bool paredes[ALTURA_TELA / 40][LARGURA_TELA / 40];
+player_t p1;
 
+//Matriz do mapa (Considerando 40 px/célula)
+bool paredes[17][21];
+
+void draw();
 int inicializar();
 
 int main(void){
   bool sair = false;
-  int x = 0, y = 0;
 
   if (!inicializar()) return 0;
 
@@ -31,13 +30,12 @@ int main(void){
     while(!al_is_event_queue_empty(fila_eventos)){
       ALLEGRO_EVENT evento;
       al_wait_for_event(fila_eventos, &evento);
-      if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(move, evento.keyboard.keycode, true);
-      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(move, evento.keyboard.keycode, false);
+      if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(p1.move, evento.keyboard.keycode, true);
+      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(p1.move, evento.keyboard.keycode, false);
       else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
     }
-    atualiza(move, x, y);
-    al_draw_bitmap(fundo, 0, 0, 0);
-    al_draw_bitmap(imagem, x, y, 0);
+    atualiza(p1, paredes);
+    draw();
     al_flip_display();
   }
 
@@ -55,12 +53,26 @@ int inicializar(){
   janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
   imagem = al_load_bitmap("assets/bman.png");
   fundo = al_load_bitmap("assets/bb.jpg");
+  parede = al_load_bitmap("assets/wall.png");
   fila_eventos = al_create_event_queue();
 
-  for(int i = 0; i < 4; i++) move[i] = false;
+  int i, j;
+
+  for(i = 0; i < 4; i++) p1.move[i] = false;
+  p1.x = p1.y = 40;
+
+  /* Montar obstaculos */
+  memset(paredes, false, sizeof(paredes));
+  for(i = 0; i < 21; i++) { paredes[0][i] = true; paredes[16][i] = true; }
+  for(i = 0; i < 17; i++) { paredes[i][0] = true; paredes[i][20] = true; }
+
+  for(j = 2; j < 21; j+= 2)
+    for(i = 2; i < 15; i++)
+      paredes[i][j] = true;
+  /* ------------------ */
 
   if (!janela){ fprintf(stderr, "Falha ao criar janela.\n"); return 0; }
-  if (!imagem || !fundo){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
+  if (!imagem || !fundo || !parede){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
   if (!fila_eventos){ fprintf(stderr, "Falha ao criar fila de eventos.\n"); al_destroy_display(janela); return 0; }
 
   al_set_window_title(janela, "Bomberman");
@@ -72,4 +84,13 @@ int inicializar(){
   al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
   return 1;
+}
+
+void draw(){
+  int i, j;
+  al_draw_bitmap(fundo, 0, 0, 0);
+  al_draw_bitmap(imagem, p1.x, p1.y, 0);
+  for(i = 0; i < 17; i++)
+    for(j = 0; j < 21; j++)
+      if(paredes[i][j]) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
 }
