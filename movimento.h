@@ -9,6 +9,8 @@ const int LARGURA_TELA = 840;
 const int ALTURA_TELA = 680;
 const int ALTURA_PLAYER = 40;
 const int LARGURA_PLAYER = 40;
+const int LINHA = 17;
+const int COLUNA = 21;
 
 typedef struct{
   int x, y;
@@ -18,4 +20,7 @@ typedef struct{
 void teclas(bool move[], int keycode, bool estado);
 
 //Move o personagem
-void atualiza(player_t &p, bool paredes[17][21]);
+void atualiza(player_t &p, bool paredes[LINHA][COLUNA]);
+
+//Testa colisao
+bool colisao(int x, int y, bool paredes[LINHA][COLUNA], int movimento);

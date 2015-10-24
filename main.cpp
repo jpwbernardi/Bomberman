@@ -1,3 +1,4 @@
+//g++ -lallegro -lallegro_font -lallegro_ttf -lallegro_image main.cpp -Wall -O2
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <stdio.h>
@@ -14,7 +15,7 @@ ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 player_t p1;
 
 //Matriz do mapa (Considerando 40 px/célula)
-bool paredes[17][21];
+bool paredes[LINHA][COLUNA];
 
 void draw();
 int inicializar();
@@ -63,10 +64,11 @@ int inicializar(){
 
   /* Montar obstaculos */
   memset(paredes, false, sizeof(paredes));
-  for(i = 0; i < 21; i++) { paredes[0][i] = true; paredes[16][i] = true; }
-  for(i = 0; i < 17; i++) { paredes[i][0] = true; paredes[i][20] = true; }
+  for(i = 0; i < COLUNA; i++) { paredes[0][i] = true; paredes[16][i] = true; }
+  for(i = 0; i < LINHA; i++) { paredes[i][0] = true; paredes[i][20] = true; }
 
-  for(j = 2; j < 21; j+= 2)
+  paredes[10][10] = true;
+  /*for(j = 2; j < COLUNA; j+= 2)
     for(i = 2; i < 15; i++)
       paredes[i][j] = true;
   /* ------------------ */
@@ -90,7 +92,7 @@ void draw(){
   int i, j;
   al_draw_bitmap(fundo, 0, 0, 0);
   al_draw_bitmap(imagem, p1.x, p1.y, 0);
-  for(i = 0; i < 17; i++)
-    for(j = 0; j < 21; j++)
+  for(i = 0; i < LINHA; i++)
+    for(j = 0; j < COLUNA; j++)
       if(paredes[i][j]) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
 }
