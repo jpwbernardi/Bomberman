@@ -7,8 +7,8 @@
 
 const int LARGURA_TELA = 840;
 const int ALTURA_TELA = 680;
-const int ALTURA_PLAYER = 40;
-const int LARGURA_PLAYER = 40;
+const int ALTURA_PLAYER = 35;
+const int LARGURA_PLAYER = 35;
 const int LINHA = 17;
 const int COLUNA = 21;
 

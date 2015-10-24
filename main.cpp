@@ -52,7 +52,7 @@ int inicializar(){
   if (!al_install_keyboard()){ fprintf(stderr, "Falha ao inicializar o teclado.\n"); return false; }
 
   janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-  imagem = al_load_bitmap("assets/bman.png");
+  imagem = al_load_bitmap("assets/bman2.png");
   fundo = al_load_bitmap("assets/bb.jpg");
   parede = al_load_bitmap("assets/wall.png");
   fila_eventos = al_create_event_queue();
@@ -67,8 +67,8 @@ int inicializar(){
   for(i = 0; i < COLUNA; i++) { paredes[0][i] = true; paredes[16][i] = true; }
   for(i = 0; i < LINHA; i++) { paredes[i][0] = true; paredes[i][20] = true; }
 
-  paredes[10][10] = true;
-  /*for(j = 2; j < COLUNA; j+= 2)
+  //paredes[10][10] = true; paredes[10][8] = true;
+  for(j = 2; j < COLUNA; j+= 2)
     for(i = 2; i < 15; i++)
       paredes[i][j] = true;
   /* ------------------ */
