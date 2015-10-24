@@ -5,6 +5,8 @@
 #define SPEED 4
 #define DIV 40
 
+const int PEDRA = 2;
+const int PAREDE = 1;
 const int LARGURA_TELA = 840;
 const int ALTURA_TELA = 680;
 const int ALTURA_PLAYER = 35;
@@ -20,7 +22,7 @@ typedef struct{
 void teclas(bool move[], int keycode, bool estado);
 
 //Move o personagem
-void atualiza(player_t &p, bool paredes[LINHA][COLUNA]);
+void atualiza(player_t &p, char paredes[LINHA][COLUNA]);
 
 //Testa colisao
-bool colisao(int x, int y, bool paredes[LINHA][COLUNA], int movimento);
+bool colisao(int x, int y, char paredes[LINHA][COLUNA], int movimento);

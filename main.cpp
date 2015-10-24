@@ -10,14 +10,16 @@ ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_BITMAP *imagem = NULL;
 ALLEGRO_BITMAP *fundo = NULL;
 ALLEGRO_BITMAP *parede = NULL;
+ALLEGRO_BITMAP *pedra = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 
 player_t p1;
 
-//Matriz do mapa (Considerando 40 px/célula)
-bool paredes[LINHA][COLUNA];
+//Matriz do mapa (Considerando 40 px/célula), contem pedras(quebraveis) e paredes fixas;
+char paredes[LINHA][COLUNA];
 
 void draw();
+void criamapa();
 int inicializar();
 
 int main(void){
@@ -31,6 +33,7 @@ int main(void){
     while(!al_is_event_queue_empty(fila_eventos)){
       ALLEGRO_EVENT evento;
       al_wait_for_event(fila_eventos, &evento);
+      if(evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_F1) criamapa();
       if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(p1.move, evento.keyboard.keycode, true);
       else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(p1.move, evento.keyboard.keycode, false);
       else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
@@ -52,9 +55,10 @@ int inicializar(){
   if (!al_install_keyboard()){ fprintf(stderr, "Falha ao inicializar o teclado.\n"); return false; }
 
   janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-  imagem = al_load_bitmap("assets/bman2.png");
   fundo = al_load_bitmap("assets/bb.jpg");
   parede = al_load_bitmap("assets/wall.png");
+  pedra = al_load_bitmap("assets/rock.png");
+  imagem = al_load_bitmap("assets/bman2.png");
   fila_eventos = al_create_event_queue();
 
   int i, j;
@@ -62,19 +66,11 @@ int inicializar(){
   for(i = 0; i < 4; i++) p1.move[i] = false;
   p1.x = p1.y = 40;
 
-  /* Montar obstaculos */
-  memset(paredes, false, sizeof(paredes));
-  for(i = 0; i < COLUNA; i++) { paredes[0][i] = true; paredes[16][i] = true; }
-  for(i = 0; i < LINHA; i++) { paredes[i][0] = true; paredes[i][20] = true; }
+  criamapa();
 
-  //paredes[10][10] = true; paredes[10][8] = true;
-  for(j = 2; j < COLUNA; j+= 2)
-    for(i = 2; i < 15; i++)
-      paredes[i][j] = true;
-  /* ------------------ */
 
   if (!janela){ fprintf(stderr, "Falha ao criar janela.\n"); return 0; }
-  if (!imagem || !fundo || !parede){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
+  if (!imagem || !fundo || !parede || !pedra){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
   if (!fila_eventos){ fprintf(stderr, "Falha ao criar fila de eventos.\n"); al_destroy_display(janela); return 0; }
 
   al_set_window_title(janela, "Bomberman");
@@ -94,5 +90,32 @@ void draw(){
   al_draw_bitmap(imagem, p1.x, p1.y, 0);
   for(i = 0; i < LINHA; i++)
     for(j = 0; j < COLUNA; j++)
-      if(paredes[i][j]) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
+      if(paredes[i][j] == PAREDE) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
+      else if(paredes[i][j] == PEDRA) al_draw_bitmap(pedra, j * DIV, i * DIV, 0);
+}
+
+void criamapa(){
+  int i, j;
+  /* Montar obstaculos */
+  memset(paredes, 0, sizeof(paredes));
+  for(i = 0; i < COLUNA; i++) { paredes[0][i] = PAREDE; paredes[16][i] = PAREDE; }
+  for(i = 0; i < LINHA; i++) { paredes[i][0] = PAREDE; paredes[i][20] = PAREDE; }
+
+  //paredes[10][10] = true; paredes[10][8] = true;
+  for(j = 2; j < COLUNA - 2; j++)
+    for(i = 2; i < 15; i++)
+      paredes[i][j] = (rand() % 4) % 3;
+  for(i = 3; i < COLUNA - 3; i++){
+    int x = rand() % 3;
+    if(x == 1) paredes[1][i] = PEDRA;
+    x = rand() % 3;
+    if(x == 1) paredes[LINHA - 2][i] = PEDRA;
+  }
+  for(i = 3; i < LINHA - 3; i++){
+    int x = rand() % 3;
+    if(x == 1) paredes[i][1] = PEDRA;
+    x = rand() % 3;
+    if(x == 1) paredes[i][COLUNA - 2] = PEDRA;
+  }
+  /* ------------------ */
 }
