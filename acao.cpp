@@ -1,4 +1,5 @@
-#include "movimento.h"
+#include "acao.h"
+#include <time.h>
 #include <allegro5/allegro.h>
 
 void teclas(bool move[], int keycode, bool estado){
@@ -30,4 +31,30 @@ bool colisao(int x, int y, char paredes[LINHA][COLUNA], int movimento){
       if(paredes[y / DIV][(x + LARGURA_PLAYER) / DIV] || paredes[(y + ALTURA_PLAYER) / DIV][(x + LARGURA_PLAYER) / DIV]) return true;
   }
   return false;
+}
+
+void novaBomba(player_t &p){
+  int i;
+  for(i = 0; i < MAX_B; i++)
+    if(!p.bombas[i].viva){
+      p.bombas[i].viva = true;
+      p.bombas[i].tictac = clock();
+      p.bombas[i].x = p.x; p.bombas[i].y = p.y;
+      break;
+    }
+}
+
+void explode(bomba_t &b, explosao_t e[200]){
+  int i, j, k = -1, dx[] = {0, 0, -1, 1}, dy[] = {-1, 1, 0, 0};
+  b.viva = false;
+  for(j = 1; j <= 3; j++)
+    for(i = 0; i < 4; i++)
+      for(k++; k < 200; k++)
+        if(!e[k].viva){
+          e[k].tempo = clock();
+          e[k].viva = true;
+          e[i].x = b.x + dx[i] * j * 10;
+          e[i].y = b.y + dy[i] * j * 10;
+          break;
+        }
 }
