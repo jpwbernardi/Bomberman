@@ -41,48 +41,18 @@ void novaBomba(player_t &p){
       p.bombas[i].tictac = clock();
       p.bombas[i].x = p.x; p.bombas[i].y = p.y;
       break;
-    }
-}
+    }}
 
 void explode(bomba_t &b, explosao_t e[200]){
-  int i, k = -1;
-  b.viva = false;
-  for(i = 0; i < 3; i++){
-    for(++k; k < 200; k++){
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x;
-        e[k].y = b.y + ALTURA_PLAYER + i * ALTURA_EXPL;
-        break;
-      }
-    }
-    for(++k; k < 200; k++){
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x + LARGURA_PLAYER + i * LARGURA_EXPL;
-        e[k].y = b.y;
-        break;
-      }
-    }
-    for(++k; k < 200; k++){
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x;
-        e[k].y = b.y - ALTURA_EXPL - i * ALTURA_EXPL;
-        break;
-      }
-    }
-    for(++k; k < 200; k++){
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x - LARGURA_EXPL - i * LARGURA_EXPL;
-        e[k].y = b.y;
-        break;
-      }
-    }
-  }
-}
+  int i, j, k = -1, dx[] = {0, 0, -1, 1, 0}, dy[] = {1, -1, 0, 0, 0};
+  b.viva = false; /*printf("Tempo passado: %lf\n", double(tmp - b.tictac) / CLOCKS_PER_SEC);*/
+  for(i = 0; i < 3; i++)
+    for(j = 0; j < 5; j++)
+      for(++k; k < 200; k++)
+        if(!e[k].viva){
+          e[k].tempo = clock();
+          e[k].viva = true;
+          e[k].x = b.x + (LARGURA_PLAYER + i * LARGURA_EXPL) * dx[j];
+          e[k].y = b.y + (ALTURA_PLAYER + i * ALTURA_EXPL) * dy[j];
+          break;
+        }}

@@ -70,7 +70,7 @@ int inicializar(){
   explosao = al_load_bitmap("assets/expl2.png");
   fila_eventos = al_create_event_queue();
 
-  int i, j;
+  int i;
   for(i = 0; i < 200; i++) pilhaExp[i].viva = false;
   for(i = 0; i < MAX_B; i++) p1.bombas[i].viva = false;
   for(i = 0; i < 4; i++) p1.move[i] = false;
@@ -105,7 +105,7 @@ void draw(){
       else if(paredes[i][j] == PEDRA) al_draw_bitmap(pedra, j * DIV, i * DIV, 0);
   for(i = 0; i < MAX_B; i++){
     tmp = clock();
-    if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 10000 * 5) //Mais ou menos 3 segundos... eu acho...
+    if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p1.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p1.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
     else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp);
   }
