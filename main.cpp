@@ -13,7 +13,7 @@ ALLEGRO_BITMAP *fundo = NULL;
 ALLEGRO_BITMAP *parede = NULL;
 ALLEGRO_BITMAP *pedra = NULL;
 ALLEGRO_BITMAP *bomba = NULL;
-ALLEGRO_BITMAP *boom = NULL;
+ALLEGRO_BITMAP *explosao = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 
 player_t p1;
@@ -21,7 +21,7 @@ player_t p1;
 
 //Matriz do mapa (Considerando 40 px/célula), contem pedras(quebraveis) e paredes fixas;
 char paredes[LINHA][COLUNA];
-explosao_t kabom[200];
+explosao_t pilhaExp[200];
 
 void draw();
 void criamapa();
@@ -67,11 +67,11 @@ int inicializar(){
   pedra = al_load_bitmap("assets/rock.png");
   imagem = al_load_bitmap("assets/bman2.png");
   bomba = al_load_bitmap("assets/bomb.png");
-  boom = al_load_bitmap("assets/explh.png");
+  explosao = al_load_bitmap("assets/expl2.png");
   fila_eventos = al_create_event_queue();
 
   int i, j;
-
+  for(i = 0; i < 200; i++) pilhaExp[i].viva = false;
   for(i = 0; i < MAX_B; i++) p1.bombas[i].viva = false;
   for(i = 0; i < 4; i++) p1.move[i] = false;
   p1.x = p1.y = 40;
@@ -80,7 +80,7 @@ int inicializar(){
 
 
   if (!janela){ fprintf(stderr, "Falha ao criar janela.\n"); return 0; }
-  if (!imagem || !fundo || !parede || !pedra || !bomba || !boom){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
+  if (!imagem || !fundo || !parede || !pedra || !bomba || !explosao){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
   if (!fila_eventos){ fprintf(stderr, "Falha ao criar fila de eventos.\n"); al_destroy_display(janela); return 0; }
 
   al_set_window_title(janela, "Bomberman");
@@ -107,10 +107,12 @@ void draw(){
     tmp = clock();
     if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 10000 * 5) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p1.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p1.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
-    else if(p1.bombas[i].viva) explode(p1.bombas[i], kabom);
+    else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp);
   }
-  for(i = 0; i < 200; i++){
-    if(kabom[i].viva) al_draw_bitmap(boom, kabom[i].x, kabom[i].y, 0);
+  for(i = 0; i < 100; i++){
+    tmp = clock();
+    if(pilhaExp[i].viva && (tmp - pilhaExp[i].tempo) < 10000 * 3) al_draw_bitmap(explosao, pilhaExp[i].x, pilhaExp[i].y, 0);
+    else if(pilhaExp[i].viva) pilhaExp[i].viva = false;
   }
 }
 

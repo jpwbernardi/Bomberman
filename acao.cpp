@@ -45,16 +45,44 @@ void novaBomba(player_t &p){
 }
 
 void explode(bomba_t &b, explosao_t e[200]){
-  int i, j, k = -1, dx[] = {0, 0, -1, 1}, dy[] = {-1, 1, 0, 0};
+  int i, k = -1;
   b.viva = false;
-  for(j = 1; j <= 3; j++)
-    for(i = 0; i < 4; i++)
-      for(k++; k < 200; k++)
-        if(!e[k].viva){
-          e[k].tempo = clock();
-          e[k].viva = true;
-          e[i].x = b.x + dx[i] * j * 10;
-          e[i].y = b.y + dy[i] * j * 10;
-          break;
-        }
+  for(i = 0; i < 3; i++){
+    for(++k; k < 200; k++){
+      if(!e[k].viva){
+        e[k].tempo = clock();
+        e[k].viva = true;
+        e[k].x = b.x;
+        e[k].y = b.y + ALTURA_PLAYER + i * ALTURA_EXPL;
+        break;
+      }
+    }
+    for(++k; k < 200; k++){
+      if(!e[k].viva){
+        e[k].tempo = clock();
+        e[k].viva = true;
+        e[k].x = b.x + LARGURA_PLAYER + i * LARGURA_EXPL;
+        e[k].y = b.y;
+        break;
+      }
+    }
+    for(++k; k < 200; k++){
+      if(!e[k].viva){
+        e[k].tempo = clock();
+        e[k].viva = true;
+        e[k].x = b.x;
+        e[k].y = b.y - ALTURA_EXPL - i * ALTURA_EXPL;
+        break;
+      }
+    }
+    for(++k; k < 200; k++){
+      if(!e[k].viva){
+        e[k].tempo = clock();
+        e[k].viva = true;
+        e[k].x = b.x - LARGURA_EXPL - i * LARGURA_EXPL;
+        e[k].y = b.y;
+        break;
+      }
+    }
+  }
 }

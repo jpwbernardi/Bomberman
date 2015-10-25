@@ -14,6 +14,8 @@ const int ALTURA_PLAYER = 35;
 const int LARGURA_PLAYER = 35;
 const int ALTURA_BOMBA = 30;
 const int LARGURA_BOMBA = 30;
+const int ALTURA_EXPL = 40;
+const int LARGURA_EXPL = 40;
 const int LINHA = 17;
 const int COLUNA = 21;
 
@@ -49,4 +51,4 @@ bool colisao(int x, int y, char paredes[LINHA][COLUNA], int movimento);
 void novaBomba(player_t &p);
 
 //Faz a explosão da bomba
-void explode(bomba_t &b);
+void explode(bomba_t &b, explosao_t e[200]);
