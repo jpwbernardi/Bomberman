@@ -107,9 +107,9 @@ void draw(){
     tmp = clock();
     if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p1.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p1.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
-    else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp);
+    else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp, paredes);
   }
-  for(i = 0; i < 100; i++){
+  for(i = 0; i < 200; i++){
     tmp = clock();
     if(pilhaExp[i].viva && (tmp - pilhaExp[i].tempo) < 10000 * 3) al_draw_bitmap(explosao, pilhaExp[i].x, pilhaExp[i].y, 0);
     else if(pilhaExp[i].viva) pilhaExp[i].viva = false;

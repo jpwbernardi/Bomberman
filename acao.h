@@ -14,8 +14,8 @@ const int ALTURA_PLAYER = 35;
 const int LARGURA_PLAYER = 35;
 const int ALTURA_BOMBA = 30;
 const int LARGURA_BOMBA = 30;
-const int ALTURA_EXPL = 40;
-const int LARGURA_EXPL = 40;
+const int ALTURA_EXPL = 35;
+const int LARGURA_EXPL = 35;
 const int LINHA = 17;
 const int COLUNA = 21;
 
@@ -44,7 +44,7 @@ void teclas(bool move[], int keycode, bool estado);
 //Move o personagem (só funciona para um player) =/
 void atualiza(player_t &p, char paredes[LINHA][COLUNA]);
 
-//Testa colisao (WIP)
+//Testa colisao do jogador(WIP)
 bool colisao(int x, int y, char paredes[LINHA][COLUNA], int movimento);
 
 //Player coloca uma bomba no mapa
@@ -52,3 +52,6 @@ void novaBomba(player_t &p);
 
 //Faz a explosão da bomba
 void explode(bomba_t &b, explosao_t e[200]);
+
+//Testa os limites para a explosão
+bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]);
