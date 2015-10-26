@@ -47,6 +47,8 @@ void novaBomba(player_t &p){
       break;
     }}
 
+
+//Pelamor de deus, melhora esse código :P
 void explode(bomba_t &b, explosao_t e[200], char paredes[LINHA][COLUNA]){
   int i, j, k = -1, dx[] = {0, 0, -1, 1, 0}, dy[] = {1, -1, 0, 0, 0}, flag;
   int raio = 3;
@@ -95,22 +97,6 @@ void explode(bomba_t &b, explosao_t e[200], char paredes[LINHA][COLUNA]){
         break;
       }
   }
-
-
-  /*for(i = 0; i < 3; i++)
-    for(j = 0; j < 5; j++)
-      for(++k; k < 200; k++)
-        if(!e[k].viva){
-          if(!colisaoExplosao(b.x + (LARGURA_PLAYER + i * LARGURA_EXPL) * dx[j], b.y + (ALTURA_PLAYER + i * ALTURA_EXPL) * dy[j], paredes)){
-            dx[j] = dy[j] = 0;
-            continue;
-          }
-          e[k].tempo = clock();
-          e[k].viva = true;
-          e[k].x = b.x + (LARGURA_PLAYER + i * LARGURA_EXPL) * dx[j];
-          e[k].y = b.y + (ALTURA_PLAYER + i * ALTURA_EXPL) * dy[j];
-          break;
-        }*/
 }
 
 bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]){
@@ -119,14 +105,18 @@ bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]){
     if(paredes[Y / DIV][X / DIV] == PEDRA) paredes[Y / DIV][X / DIV] = 0;
     flag = 1;
   }
-  if(paredes[Y / DIV][x / DIV]){
-    if(paredes[Y / DIV][x / DIV] == PEDRA) paredes[Y / DIV][x / DIV] = 0;
-    flag = 1;
-  }
-  if((paredes[Y / DIV][(x + LARGURA_EXPL) / DIV])){
-    if(paredes[Y / DIV][(x + LARGURA_EXPL) / DIV] == PEDRA) paredes[Y / DIV][(x + LARGURA_EXPL) / DIV] = 0;
-    flag = 1;
-  }
+  if(paredes[y / DIV][x / DIV] == PEDRA){ paredes[y / DIV][x / DIV] = 0; flag = 1; }
+  if(paredes[y / DIV][(x + LARGURA_EXPL) / DIV] == PEDRA){ paredes[y / DIV][(x + LARGURA_EXPL) / DIV] = 0; flag = 1; }
+  if(paredes[(y + ALTURA_EXPL) / DIV][x / DIV] == PEDRA){ paredes[(y + ALTURA_EXPL) / DIV][x / DIV] = 0; flag = 1; }
+  if(paredes[(y + ALTURA_EXPL) / DIV][(x + LARGURA_EXPL) / DIV] == PEDRA){ paredes[(y + ALTURA_EXPL) / DIV][(x + LARGURA_EXPL) / DIV] = 0; flag = 1; }
+  // if(paredes[Y / DIV][x / DIV]){
+  //   if(paredes[Y / DIV][x / DIV] == PEDRA) paredes[Y / DIV][x / DIV] = 0;
+  //   flag = 1;
+  // }
+  // if((paredes[Y / DIV][(x + LARGURA_EXPL) / DIV])){
+  //   if(paredes[Y / DIV][(x + LARGURA_EXPL) / DIV] == PEDRA) paredes[Y / DIV][(x + LARGURA_EXPL) / DIV] = 0;
+  //   flag = 1;
+  // }
   if(flag) return true;
   return false;
 }
