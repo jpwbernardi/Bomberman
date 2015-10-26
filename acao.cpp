@@ -2,11 +2,15 @@
 #include <time.h>
 #include <allegro5/allegro.h>
 
-void teclas(bool move[], int keycode, bool estado){
-  if(keycode == ALLEGRO_KEY_UP) move[tUP] = estado;
-  if(keycode == ALLEGRO_KEY_DOWN) move[tDOWN] = estado;
-  if(keycode == ALLEGRO_KEY_LEFT) move[tLEFT] = estado;
-  if(keycode == ALLEGRO_KEY_RIGHT) move[tRIGHT] = estado;
+void teclas(bool p1[], bool p2[], int keycode, bool estado){
+  if(keycode == ALLEGRO_KEY_UP) p1[tUP] = estado;
+  if(keycode == ALLEGRO_KEY_DOWN) p1[tDOWN] = estado;
+  if(keycode == ALLEGRO_KEY_LEFT) p1[tLEFT] = estado;
+  if(keycode == ALLEGRO_KEY_RIGHT) p1[tRIGHT] = estado;
+  if(keycode == ALLEGRO_KEY_W) p2[tUP] = estado;
+  if(keycode == ALLEGRO_KEY_S) p2[tDOWN] = estado;
+  if(keycode == ALLEGRO_KEY_A) p2[tLEFT] = estado;
+  if(keycode == ALLEGRO_KEY_D) p2[tRIGHT] = estado;
 }
 
 void atualiza(player_t &p, char paredes[LINHA][COLUNA]){

@@ -39,7 +39,7 @@ typedef struct{
 
 
 //Define se está ou não movento a tecla
-void teclas(bool move[], int keycode, bool estado);
+void teclas(bool p1[], bool p2[], int keycode, bool estado);
 
 //Move o personagem (só funciona para um player) =/
 void atualiza(player_t &p, char paredes[LINHA][COLUNA]);

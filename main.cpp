@@ -16,7 +16,7 @@ ALLEGRO_BITMAP *bomba = NULL;
 ALLEGRO_BITMAP *explosao = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
 
-player_t p1;
+player_t p1, p2;
 
 
 //Matriz do mapa (Considerando 40 px/célula), contem pedras(quebraveis) e paredes fixas;
@@ -38,13 +38,15 @@ int main(void){
     while(!al_is_event_queue_empty(fila_eventos)){
       ALLEGRO_EVENT evento;
       al_wait_for_event(fila_eventos, &evento);
-      if(evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_SPACE) novaBomba(p1);
+      if(evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_SPACE) novaBomba(p2);
+      else if(evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_RCTRL) novaBomba(p1);
       else if(evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_F1) criamapa();
-      else if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(p1.move, evento.keyboard.keycode, true);
-      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(p1.move, evento.keyboard.keycode, false);
+      else if (evento.type == ALLEGRO_EVENT_KEY_DOWN) teclas(p1.move, p2.move, evento.keyboard.keycode, true);
+      else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(p1.move, p2.move, evento.keyboard.keycode, false);
       else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
     }
     atualiza(p1, paredes);
+    atualiza(p2, paredes);
     draw();
     al_flip_display();
   }
@@ -72,9 +74,9 @@ int inicializar(){
 
   int i;
   for(i = 0; i < 200; i++) pilhaExp[i].viva = false;
-  for(i = 0; i < MAX_B; i++) p1.bombas[i].viva = false;
-  for(i = 0; i < 4; i++) p1.move[i] = false;
-  p1.x = p1.y = 40;
+  for(i = 0; i < MAX_B; i++){ p1.bombas[i].viva = false; p2.bombas[i].viva = false; }
+  for(i = 0; i < 4; i++){ p1.move[i] = false; p2.move[i] = false; }
+  p2.x = p2.y = 40; p1.x = LARGURA_TELA - 78; p1.y = ALTURA_TELA - 78;
 
   criamapa();
 
@@ -99,6 +101,7 @@ void draw(){
   long tmp;
   al_draw_bitmap(fundo, 0, 0, 0);
   al_draw_bitmap(imagem, p1.x, p1.y, 0);
+  al_draw_bitmap(imagem, p2.x, p2.y, 0);
   for(i = 0; i < LINHA; i++)
     for(j = 0; j < COLUNA; j++)
       if(paredes[i][j] == PAREDE) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
@@ -108,6 +111,10 @@ void draw(){
     if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p1.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p1.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
     else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp, paredes);
+    tmp = clock();
+    if(p2.bombas[i].viva && (tmp - p2.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
+      al_draw_bitmap(bomba, p2.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p2.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
+    else if(p2.bombas[i].viva) explode(p2.bombas[i], pilhaExp, paredes);
   }
   for(i = 0; i < 200; i++){
     tmp = clock();
