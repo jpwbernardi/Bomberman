@@ -85,6 +85,7 @@ int inicializar(){
   if (!imagem || !fundo || !parede || !pedra || !bomba || !explosao){ fprintf(stderr, "Falha ao carregar o arquivo de imagem.\n"); al_destroy_display(janela); return 0; }
   if (!fila_eventos){ fprintf(stderr, "Falha ao criar fila de eventos.\n"); al_destroy_display(janela); return 0; }
 
+  al_set_display_icon(janela, imagem);
   al_set_window_title(janela, "Bomberman");
   al_register_event_source(fila_eventos, al_get_display_event_source(janela));
   al_draw_bitmap(imagem, 0, 0, 0);

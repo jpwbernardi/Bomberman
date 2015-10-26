@@ -53,49 +53,17 @@ void explode(bomba_t &b, explosao_t e[200], char paredes[LINHA][COLUNA]){
   int i, j, k = -1, dx[] = {0, 0, -1, 1, 0}, dy[] = {1, -1, 0, 0, 0}, flag;
   int raio = 3;
   b.viva = false; /*printf("Tempo passado: %lf\n", double(tmp - b.tictac) / CLOCKS_PER_SEC);*/
-  for(j = b.y, flag = i = 0; i < raio && !flag; i++){
+  for(k = j = b.y, flag = i = 0; i < raio && !flag; i++){
     for(; j < b.y + i * ALTURA_EXPL + ALTURA_EXPL && !(flag = colisaoExplosao(b.x, j, paredes)); j++);
-    for(++k; k < 200; k++)
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x;
-        e[k].y = j;
-        break;
-      }
+    novaExpl(b.x, j, e);
+    for(; k > b.y - i * ALTURA_EXPL - ALTURA_EXPL && !(flag = colisaoExplosao(b.x, k, paredes)); k--);
+    novaExpl(b.x, k, e);
   }
-  for(j = b.y, flag = i = 0; i < raio && !flag; i++){
-    for(; j > b.y - i * ALTURA_EXPL - ALTURA_EXPL && !(flag = colisaoExplosao(b.x, j, paredes)); j--);
-    for(++k; k < 200; k++)
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = b.x;
-        e[k].y = j;
-        break;
-      }
-  }
-  for(j = b.x, flag = i = 0; i < raio && !flag; i++){
+  for(k = j = b.x, flag = i = 0; i < raio && !flag; i++){
     for(; j < b.x + i * LARGURA_EXPL + LARGURA_EXPL && !(flag = colisaoExplosao(j, b.y, paredes)); j++);
-    for(++k; k < 200; k++)
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = j;
-        e[k].y = b.y;
-        break;
-      }
-  }
-  for(j = b.x, flag = i = 0; i < raio && !flag; i++){
-    for(; j > b.x - i * LARGURA_EXPL - LARGURA_EXPL && !(flag = colisaoExplosao(j, b.y, paredes)); j--);
-    for(++k; k < 200; k++)
-      if(!e[k].viva){
-        e[k].tempo = clock();
-        e[k].viva = true;
-        e[k].x = j;
-        e[k].y = b.y;
-        break;
-      }
+    novaExpl(j, b.y, e);
+    for(; k > b.x - i * LARGURA_EXPL - LARGURA_EXPL && !(flag = colisaoExplosao(k, b.y, paredes)); k--);
+    novaExpl(k, b.y, e);
   }
 }
 
@@ -119,4 +87,15 @@ bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]){
   // }
   if(flag) return true;
   return false;
+}
+
+void novaExpl(int x, int y, explosao_t e[200]){
+  for(int k = 0; k < 200; k++)
+    if(!e[k].viva){
+      e[k].tempo = clock();
+      e[k].viva = true;
+      e[k].x = x;
+      e[k].y = y;
+      return;
+    }
 }

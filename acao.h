@@ -55,3 +55,6 @@ void explode(bomba_t &b, explosao_t e[200]);
 
 //Testa os limites para a explosão
 bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]);
+
+//Cria uma nova animação de explosão
+void novaExpl(int x, int y, explosao_t e[200]);
