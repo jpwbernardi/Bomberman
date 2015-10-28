@@ -5,6 +5,8 @@
 #define SPEED 4
 #define DIV 40
 #define MAX_B 5
+#define VERTICAL 1
+#define HORIZONTAL 2
 
 const int PEDRA = 2;
 const int PAREDE = 1;
@@ -54,7 +56,10 @@ void novaBomba(player_t &p);
 void explode(bomba_t &b, explosao_t e[200]);
 
 //Testa os limites para a explosão
-bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA]);
+bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA], char direcao);
+
+//Testa as paredes de forma genérica (chamada pela colisaoExplosao)
+bool testaCE(int x, int y, char paredes[LINHA][COLUNA]);
 
 //Cria uma nova animação de explosão
 void novaExpl(int x, int y, explosao_t e[200]);
