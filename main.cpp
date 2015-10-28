@@ -5,6 +5,8 @@
 #include <string.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 using namespace std;
 
 ALLEGRO_DISPLAY *janela = NULL;
@@ -15,9 +17,10 @@ ALLEGRO_BITMAP *pedra = NULL;
 ALLEGRO_BITMAP *bomba = NULL;
 ALLEGRO_BITMAP *explosao = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
+ALLEGRO_FONT *fonte = NULL;
 
 player_t p1, p2;
-
+double tempoInicial;
 
 //Matriz do mapa (Considerando 40 px/célula), contem pedras(quebraveis) e paredes fixas;
 char paredes[LINHA][COLUNA];
@@ -26,6 +29,7 @@ explosao_t pilhaExp[200];
 void draw();
 void criamapa();
 int inicializar();
+double getTime();
 
 int main(void){
   bool sair = false;
@@ -35,6 +39,8 @@ int main(void){
   al_draw_bitmap(fundo, 0, 0, 0);
 
   while (!sair){
+    tempoInicial = al_get_time();
+
     while(!al_is_event_queue_empty(fila_eventos)){
       ALLEGRO_EVENT evento;
       al_wait_for_event(fila_eventos, &evento);
@@ -48,7 +54,10 @@ int main(void){
     atualiza(p1, paredes);
     atualiza(p2, paredes);
     draw();
+
     al_flip_display();
+
+    if(getTime() < 1.0 / FPS) al_rest((1.0 / FPS) - getTime());
   }
 
   al_destroy_display(janela);
@@ -62,6 +71,8 @@ int inicializar(){
   if (!al_init()){ fprintf(stderr, "Falha ao inicializar a Allegro.\n");  return 0; }
   if (!al_init_image_addon()){ fprintf(stderr, "Falha ao inicializar add-on allegro_image.\n"); return 0; }
   if (!al_install_keyboard()){ fprintf(stderr, "Falha ao inicializar o teclado.\n"); return false; }
+  al_init_font_addon();
+  if (!al_init_ttf_addon()){ fprintf(stderr, "Falha ao inicializar allegro_ttf.\n"); return false; }
 
   janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
   fundo = al_load_bitmap("assets/bb.jpg");
@@ -71,6 +82,7 @@ int inicializar(){
   bomba = al_load_bitmap("assets/bomb.png");
   explosao = al_load_bitmap("assets/expl2.png");
   fila_eventos = al_create_event_queue();
+  fonte = al_load_font("assets/animated.ttf", 32, 0);
 
   int i;
   for(i = 0; i < 200; i++) pilhaExp[i].viva = false;
@@ -148,4 +160,8 @@ void criamapa(){
     if(x == 1) paredes[i][COLUNA - 2] = PEDRA;
   }
   /* ------------------ */
+}
+
+double getTime(){
+  return al_get_time() - tempoInicial;
 }

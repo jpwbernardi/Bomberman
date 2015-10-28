@@ -1,23 +1,35 @@
+//Movimentos do personagem
 #define tUP 0
 #define tDOWN 1
 #define tLEFT 2
 #define tRIGHT 3
+//Velocidade do personagem
 #define SPEED 4
+//Divisões na janela para criar a matriz
 #define DIV 40
+//Numero maximo de bombas
 #define MAX_B 5
+//Direções para explosão
 #define VERTICAL 1
 #define HORIZONTAL 2
+#define FPS 60
 
+//Código para o mapa
 const int PEDRA = 2;
 const int PAREDE = 1;
+//Altura e largura da janela
 const int LARGURA_TELA = 840;
 const int ALTURA_TELA = 680;
+//Altura e largura do jogador
 const int ALTURA_PLAYER = 35;
 const int LARGURA_PLAYER = 35;
+//Altura e largura da bomba
 const int ALTURA_BOMBA = 30;
 const int LARGURA_BOMBA = 30;
+//Altura e largura da explosao
 const int ALTURA_EXPL = 35;
 const int LARGURA_EXPL = 35;
+//Quantidade de linhas e colunas da matriz (Deve ser LARGURA_TELA / DIV e ALTURA_TELA / DIV)
 const int LINHA = 17;
 const int COLUNA = 21;
 
