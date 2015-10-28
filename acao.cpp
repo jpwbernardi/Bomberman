@@ -47,7 +47,6 @@ void novaBomba(player_t &p){
       break;
     }}
 
-
 //Pelamor de deus, melhora esse código :P
 void explode(bomba_t &b, explosao_t e[200], char paredes[LINHA][COLUNA]){
   int i, j, k = -1, flag, flag2;
