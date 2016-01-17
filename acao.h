@@ -41,7 +41,7 @@ typedef struct{
 
 typedef struct{
   int x, y;
-  bool move[4];
+  bool move[4], vivo;
   bomba_t bombas[MAX_B];
 }player_t;
 
@@ -65,13 +65,13 @@ bool colisao(int x, int y, char paredes[LINHA][COLUNA], int movimento);
 void novaBomba(player_t &p);
 
 //Faz a explosão da bomba
-void explode(bomba_t &b, explosao_t e[200]);
+void explode(bomba_t &b, explosao_t e[200], player_t &p1, player_t &p2, char paredes[LINHA][COLUNA]);
 
 //Testa os limites para a explosão
-bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA], char direcao);
+bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA], char direcao, player_t &p1, player_t &p2);
 
 //Testa as paredes de forma genérica (chamada pela colisaoExplosao)
-bool testaCE(int x, int y, char paredes[LINHA][COLUNA]);
+bool testaCE(int x, int y, char paredes[LINHA][COLUNA], player_t &p1, player_t &p2);
 
 //Cria uma nova animação de explosão
 void novaExpl(int x, int y, explosao_t e[200]);

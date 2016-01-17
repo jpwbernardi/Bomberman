@@ -11,6 +11,7 @@ using namespace std;
 
 ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_BITMAP *imagem = NULL;
+ALLEGRO_BITMAP *imagem1 = NULL;
 ALLEGRO_BITMAP *fundo = NULL;
 ALLEGRO_BITMAP *parede = NULL;
 ALLEGRO_BITMAP *pedra = NULL;
@@ -51,6 +52,10 @@ int main(void){
       else if(evento.type == ALLEGRO_EVENT_KEY_UP) teclas(p1.move, p2.move, evento.keyboard.keycode, false);
       else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) sair = true;
     }
+
+    if(!p1.vivo) { printf("Player 1 morto."); }
+    if(!p2.vivo) { printf("Player 2 morto."); }
+
     atualiza(p1, paredes);
     atualiza(p2, paredes);
     draw();
@@ -79,6 +84,7 @@ int inicializar(){
   parede = al_load_bitmap("assets/wall.png");
   pedra = al_load_bitmap("assets/rock.png");
   imagem = al_load_bitmap("assets/bman2.png");
+  imagem1 = al_load_bitmap("assets/bman22.png");
   bomba = al_load_bitmap("assets/bomb.png");
   explosao = al_load_bitmap("assets/expl2.png");
   fila_eventos = al_create_event_queue();
@@ -89,7 +95,7 @@ int inicializar(){
   for(i = 0; i < MAX_B; i++){ p1.bombas[i].viva = false; p2.bombas[i].viva = false; }
   for(i = 0; i < 4; i++){ p1.move[i] = false; p2.move[i] = false; }
   p2.x = p2.y = 40; p1.x = LARGURA_TELA - 78; p1.y = ALTURA_TELA - 78;
-
+  p2.vivo = p1.vivo = true;
   criamapa();
 
 
@@ -114,7 +120,7 @@ void draw(){
   long tmp;
   al_draw_bitmap(fundo, 0, 0, 0);
   al_draw_bitmap(imagem, p1.x, p1.y, 0);
-  al_draw_bitmap(imagem, p2.x, p2.y, 0);
+  al_draw_bitmap(imagem1, p2.x, p2.y, 0);
   for(i = 0; i < LINHA; i++)
     for(j = 0; j < COLUNA; j++)
       if(paredes[i][j] == PAREDE) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
@@ -123,11 +129,11 @@ void draw(){
     tmp = clock();
     if(p1.bombas[i].viva && (tmp - p1.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p1.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p1.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
-    else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp, paredes);
+    else if(p1.bombas[i].viva) explode(p1.bombas[i], pilhaExp, p1, p2, paredes);
     tmp = clock();
     if(p2.bombas[i].viva && (tmp - p2.bombas[i].tictac) < 100000) //Mais ou menos 3 segundos... eu acho...
       al_draw_bitmap(bomba, p2.bombas[i].x + (LARGURA_PLAYER - LARGURA_BOMBA) / 2.0, p2.bombas[i].y + (ALTURA_PLAYER - ALTURA_BOMBA) / 2.0, 0);
-    else if(p2.bombas[i].viva) explode(p2.bombas[i], pilhaExp, paredes);
+    else if(p2.bombas[i].viva) explode(p2.bombas[i], pilhaExp, p1, p2, paredes);
   }
   for(i = 0; i < 200; i++){
     tmp = clock();

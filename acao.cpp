@@ -48,43 +48,49 @@ void novaBomba(player_t &p){
     }}
 
 //Pelamor de deus, melhora esse código :P
-void explode(bomba_t &b, explosao_t e[200], char paredes[LINHA][COLUNA]){
+void explode(bomba_t &b, explosao_t e[200], player_t &p1, player_t &p2, char paredes[LINHA][COLUNA]){
   int i, j, k = -1, flag, flag2;
   int raio = 3;
   b.viva = false; /*printf("Tempo passado: %lf\n", double(tmp - b.tictac) / CLOCKS_PER_SEC);*/
   for(k = j = b.y, flag2 = flag = i = 0; i < raio; i++){
     if(!flag){
-      for(; j < b.y + i * ALTURA_EXPL + ALTURA_EXPL && !(flag |= colisaoExplosao(b.x, j, paredes, VERTICAL)); j++);
+      for(; j < b.y + i * ALTURA_EXPL + ALTURA_EXPL && !(flag |= colisaoExplosao(b.x, j, paredes, VERTICAL, p1, p2)); j++);
       novaExpl(b.x, j, e);
     }
     if(!flag2){
-      for(; k > b.y - i * ALTURA_EXPL - ALTURA_EXPL && !(flag2 |= colisaoExplosao(b.x, k, paredes, VERTICAL)); k--);
+      for(; k > b.y - i * ALTURA_EXPL - ALTURA_EXPL && !(flag2 |= colisaoExplosao(b.x, k, paredes, VERTICAL, p1, p2)); k--);
       novaExpl(b.x, k, e);
     }}
   for(k = j = b.x, flag2 = flag = i = 0; i < raio; i++){
     if(!flag){
-      for(; j < b.x + i * LARGURA_EXPL + LARGURA_EXPL && !(flag |= colisaoExplosao(j, b.y, paredes, HORIZONTAL)); j++);
+      for(; j < b.x + i * LARGURA_EXPL + LARGURA_EXPL && !(flag |= colisaoExplosao(j, b.y, paredes, HORIZONTAL, p1, p2)); j++);
       novaExpl(j, b.y, e);
     }
     if(!flag2){
-      for(; k > b.x - i * LARGURA_EXPL - LARGURA_EXPL && !(flag2 |= colisaoExplosao(k, b.y, paredes, HORIZONTAL)); k--);
+      for(; k > b.x - i * LARGURA_EXPL - LARGURA_EXPL && !(flag2 |= colisaoExplosao(k, b.y, paredes, HORIZONTAL, p1, p2)); k--);
       novaExpl(k, b.y, e);
     }}}
 
-bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA], char direcao){
+bool colisaoExplosao(int x, int y, char paredes[LINHA][COLUNA], char direcao, player_t &p1, player_t &p2){
   int X = x + LARGURA_EXPL / 2, Y = y + ALTURA_EXPL / 2, flag = 0;
-  flag |= testaCE(X, Y, paredes);
+  flag |= testaCE(X, Y, paredes, p1, p2);
   if(direcao == HORIZONTAL){
-    flag |= testaCE(X, y, paredes);
-    flag |= testaCE(X, y + ALTURA_EXPL, paredes);
+    flag |= testaCE(X, y, paredes, p1, p2);
+    flag |= testaCE(X, y + ALTURA_EXPL, paredes, p1, p2);
   } else {
-    flag |= testaCE(x, Y, paredes);
-    flag |= testaCE(x + LARGURA_EXPL, Y, paredes);
+    flag |= testaCE(x, Y, paredes, p1, p2);
+    flag |= testaCE(x + LARGURA_EXPL, Y, paredes, p1, p2);
   }
   return flag;
 }
 
-bool testaCE(int x, int y, char paredes[LINHA][COLUNA]){
+bool testaCE(int x, int y, char paredes[LINHA][COLUNA], player_t &p1, player_t &p2){
+  if(y / DIV == (p1.y + ALTURA_PLAYER) / DIV && x / DIV == (p1.x + LARGURA_PLAYER) / DIV){
+    p1.vivo = false;
+  }
+  if(y / DIV == (p2.y + ALTURA_PLAYER) / DIV && x / DIV == (p2.x + LARGURA_PLAYER) / DIV){
+    p2.vivo = false;
+  }
   if(paredes[y / DIV][x / DIV]){
     if(paredes[y / DIV][x / DIV] == PEDRA) paredes[y / DIV][x / DIV] = 0;
     return true;
