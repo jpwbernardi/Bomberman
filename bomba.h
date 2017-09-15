@@ -20,6 +20,11 @@ struct explosao {
     ativa = FALSE;
     m[x][y].info = AR; //Destroi tudo
   };
+  void colide(player &p1, player &p2) {
+    if (!ativa) return;
+    if (p1.x == x && p1.y == y) { p1.vida--; p1.reset(); }
+    if (p2.x == x && p2.y == y) { p2.vida--; p2.reset(); }
+  };
 };
 
 void novaexpl(explosao* p, int x, int y);

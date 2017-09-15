@@ -7,7 +7,7 @@
 #define ATRASO 0.2
 
 struct player{
-  int x, y;
+  int x, y, xi, yi;
   int vida, bombas;
   double tmpespera;
   char movimento[4];
@@ -17,7 +17,7 @@ struct player{
   };
   player(int _x, int _y) : x(_x), y(_y) {
     memset(movimento, 0, sizeof(movimento));
-    vida = VIDA; tmpespera = 0;
+    vida = VIDA; tmpespera = 0; xi = _x; yi = _y;
   };
   void espera() { tmpespera = al_get_time(); };
   void move(mapa** m) {
@@ -27,5 +27,9 @@ struct player{
     else if (movimento[ESQUERDA] && m[x][y - 1].info == AR) y--;
     else if (movimento[DIREITA] && m[x][y + 1].info == AR) y++;
     tmpespera = al_get_time();
+  };
+  void reset() {
+    x = xi; y = yi;
+    //Aplicar invencibilidade
   };
 };

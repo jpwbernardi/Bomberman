@@ -41,7 +41,6 @@ double tempoinicial;
 
 int main(void) {
   int err;
-  printf("%d %d\n", ALT_TELA/DIV, LAR_TELA / DIV);
   if ((err = verificacoes())) return err;
 
   while (fechar == false) {
@@ -52,7 +51,7 @@ int main(void) {
     for (int i = 0; i < QTDBOMBAS; i++)
       b[i].explodir(m, e);
     for (int i = 0; i < QTDEXPL; i++)
-      e[i].some(m);
+      { e[i].some(m); e[i].colide(p1, p2); }
     draw();
     if(tempodecorrido() < 1.0 / FPS) al_rest((1.0 / FPS) - tempodecorrido());
   }
@@ -64,8 +63,6 @@ int main(void) {
 int verificacoes() {
   srand (time(NULL));
   m = novomapa(ALT_TELA / DIV, LAR_TELA / DIV);
-  printf("%d %d\n", ALT_TELA / DIV, LAR_TELA / DIV);
-  printf("> %d %d\n", LAR_TELA / DIV - 1, ALT_TELA / DIV - 1);
   p1 = player(1,1); p2 = player(ALT_TELA / DIV - 2, LAR_TELA / DIV - 2);
 
   if (!al_init()) {
