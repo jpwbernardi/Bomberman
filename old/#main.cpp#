@@ -63,7 +63,7 @@ int main(void){
     al_flip_display();
 
     if(getTime() < 1.0 / FPS) al_rest((1.0 / FPS) - getTime());
-  }
+n  }
 
   al_destroy_display(janela);
   al_destroy_event_queue(fila_eventos);
