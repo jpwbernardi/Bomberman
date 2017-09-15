@@ -78,11 +78,11 @@ int verificacoes() {
     al_register_event_source(eventos, al_get_keyboard_event_source());
   al_register_event_source(eventos, al_get_display_event_source(janela));
 
-  parede = al_load_bitmap("assets/wall.png");
-  pedra = al_load_bitmap("assets/rock.png");
-  ip1 = al_load_bitmap("assets/bman.png");
-  ibomba = al_load_bitmap("assets/bomb.png");
-  iexplosao = al_load_bitmap("assets/expl2.png");
+  parede = al_load_bitmap("assets/parede.png");
+  pedra = al_load_bitmap("assets/pedra.png");
+  ip1 = al_load_bitmap("assets/p1.png");
+  ibomba = al_load_bitmap("assets/bomba1.png");
+  iexplosao = al_load_bitmap("assets/explosao3.png");
   if (!parede || !pedra || !ip1) { printf("Falha nas imagens"); return -1; }
   return 0;
 }
