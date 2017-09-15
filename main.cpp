@@ -4,13 +4,16 @@
 #include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include "mapa.cpp"
 #include "player.h" //Cuidado com a ordem das bibliotecas!!
 #include "bomba.cpp"
 
 #define FPS 60
-#define ALT_TELA 840
-#define LAR_TELA 680
+#define LAR_TELA 840
+#define ALT_TELA 680
+#define ALT_INFO 20
 #define DIV 40
 
 ALLEGRO_DISPLAY *janela = NULL;
@@ -19,14 +22,17 @@ ALLEGRO_BITMAP *iexplosao = NULL;
 ALLEGRO_BITMAP *ibomba = NULL;
 ALLEGRO_BITMAP *parede = NULL;
 ALLEGRO_BITMAP *pedra = NULL;
+ALLEGRO_BITMAP *coracao = NULL;
 ALLEGRO_BITMAP *ip1 = NULL;
+ALLEGRO_BITMAP *ip2 = NULL;
+ALLEGRO_FONT *fonte = NULL;
 
 int verificacoes();
 void draw();
 void executaeventos();
 double tempodecorrido(); //Quanto tempo se passou
 
-player p1(1,1);
+player p1, p2;
 mapa **m = NULL;
 bomba b[QTDBOMBAS];
 explosao e[QTDEXPL];
@@ -42,6 +48,7 @@ int main(void) {
     tempoinicial = al_get_time();
     executaeventos();
     p1.move(m);
+    p2.move(m);
     for (int i = 0; i < QTDBOMBAS; i++)
       b[i].explodir(m, e);
     for (int i = 0; i < QTDEXPL; i++)
@@ -56,7 +63,10 @@ int main(void) {
 
 int verificacoes() {
   srand (time(NULL));
-  m = novomapa(LAR_TELA / DIV, ALT_TELA / DIV);
+  m = novomapa(ALT_TELA / DIV, LAR_TELA / DIV);
+  printf("%d %d\n", ALT_TELA / DIV, LAR_TELA / DIV);
+  printf("> %d %d\n", LAR_TELA / DIV - 1, ALT_TELA / DIV - 1);
+  p1 = player(1,1); p2 = player(ALT_TELA / DIV - 2, LAR_TELA / DIV - 2);
 
   if (!al_init()) {
     fprintf(stderr, "Falha ao inicializar a Allegro 5\n"); return -1;
@@ -66,11 +76,16 @@ int verificacoes() {
     fprintf(stderr, "Falha ao inicializar add-on allegro_image.\n"); return 0;
   }
 
-  if (!al_install_keyboard()){
+  if (!al_install_keyboard()) {
     fprintf(stderr, "Falha ao inicializar o teclado.\n"); return -1;
   }
 
-  janela = al_create_display(ALT_TELA, LAR_TELA);
+  al_init_font_addon();
+  if (!al_init_ttf_addon()) {
+    fprintf(stderr, "Falha ao inicializar allegro_ttf.\n"); return -1;
+  }
+
+  janela = al_create_display(LAR_TELA, ALT_TELA + ALT_INFO);
   if (!janela) { fprintf(stderr, "Falha ao criar a janela\n"); return -1; }
 
   eventos = al_create_event_queue();
@@ -78,18 +93,30 @@ int verificacoes() {
     al_register_event_source(eventos, al_get_keyboard_event_source());
   al_register_event_source(eventos, al_get_display_event_source(janela));
 
+  fonte = al_load_font("assets/Pixeled.ttf", 12, 0);
+
+  coracao = al_load_bitmap("assets/coracao1.png");
   parede = al_load_bitmap("assets/parede.png");
   pedra = al_load_bitmap("assets/pedra.png");
   ip1 = al_load_bitmap("assets/p1.png");
+  ip2 = al_load_bitmap("assets/p2.png");
   ibomba = al_load_bitmap("assets/bomba1.png");
   iexplosao = al_load_bitmap("assets/explosao3.png");
-  if (!parede || !pedra || !ip1) { printf("Falha nas imagens"); return -1; }
+  if (!parede || !pedra || !ip1 || !ip2) { printf("Falha nas imagens"); return -1; }
   return 0;
 }
 
 void draw() {
-  int i, j, col = ALT_TELA / DIV, lin = LAR_TELA / DIV;
+  int i, j, lin = ALT_TELA / DIV, col = LAR_TELA / DIV;
   al_clear_to_color(al_map_rgb(0, 0, 0));
+  al_draw_text(fonte, al_map_rgb(255, 255, 255), 10, ALT_TELA - 10, 0, "P1");
+  al_draw_text(fonte, al_map_rgb(255, 255, 255), LAR_TELA - 30, ALT_TELA - 10, 0, "P2");
+
+  for (i = 0; i < p1.vida; i++)
+    al_draw_bitmap(coracao, 30 + i * 22, ALT_TELA, 0);
+  for (i = 0; i < p2.vida; i++)
+    al_draw_bitmap(coracao, LAR_TELA - 53 - i * 22, ALT_TELA, 0);
+
   for (i = 0; i < lin; i++)
     for (j = 0; j < col; j++)
       if (m[i][j].info == PAREDE) al_draw_bitmap(parede, j * DIV, i * DIV, 0);
@@ -101,6 +128,7 @@ void draw() {
     if (e[i].ativa)
       al_draw_bitmap(iexplosao, e[i].y * DIV, e[i].x * DIV, 0);
   al_draw_bitmap(ip1, p1.y * DIV, p1.x * DIV, 0);
+  al_draw_bitmap(ip2, p2.y * DIV, p2.x * DIV, 0);
   al_flip_display();
 }
 
@@ -126,6 +154,20 @@ void executaeventos() {
         break;
       case ALLEGRO_KEY_SPACE:
         novabomba(b, p1.x, p1.y);
+      case ALLEGRO_KEY_UP:
+        p2.movimento[CIMA] = !p2.movimento[CIMA];
+        break;
+      case ALLEGRO_KEY_LEFT:
+        p2.movimento[ESQUERDA] = !p2.movimento[ESQUERDA];
+        break;
+      case ALLEGRO_KEY_DOWN:
+        p2.movimento[BAIXO] = !p2.movimento[BAIXO];
+        break;
+      case ALLEGRO_KEY_RIGHT:
+        p2.movimento[DIREITA] = !p2.movimento[DIREITA];
+        break;
+      case ALLEGRO_KEY_RSHIFT:
+        novabomba(b, p2.x, p2.y);
       }
     }
   }
