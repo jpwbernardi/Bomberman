@@ -12,4 +12,4 @@ Versão 1.0
 Adição de menu com configurações(Fullscreen)
 
 Bugs conhecidos:
-     Bomba no spawnpoint tira todas as vidas.
+     Nenhum
