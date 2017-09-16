@@ -22,8 +22,8 @@ struct explosao {
   };
   void colide(player &p1, player &p2) {
     if (!ativa) return;
-    if (p1.x == x && p1.y == y) { p1.vida--; p1.reset(); }
-    if (p2.x == x && p2.y == y) { p2.vida--; p2.reset(); }
+    if (p1.x == x && p1.y == y) p1.dano();
+    if (p2.x == x && p2.y == y) p2.dano();
   };
 };
 

@@ -6,11 +6,12 @@
 #define DIREITA 3
 #define ATRASO 0.2
 
-struct player{
+struct player {
   int x, y, xi, yi;
   int vida, bombas;
   double tmpespera;
   char movimento[4];
+  efeito ef;
   player() {
     memset(movimento, 0, sizeof(movimento));
     vida = VIDA; tmpespera = 0;
@@ -28,8 +29,16 @@ struct player{
     else if (movimento[DIREITA] && m[x][y + 1].info == AR) y++;
     tmpespera = al_get_time();
   };
-  void reset() {
+  void renasce() {
     x = xi; y = yi;
-    //Aplicar invencibilidade
+    ef = efeito(INV_RESPAWN, INV_RESPAWN_T);//Aplicar invencibilidade
   };
+  void dano() {
+    if (ef.ativo() && ef.id == INV_RESPAWN) return;
+    vida--; this->renasce();
+  };
+  void reset() {
+    x = xi; y = yi; tmpespera = 0;
+    vida = 3;
+  }
 };

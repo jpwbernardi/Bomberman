@@ -12,5 +12,6 @@ mapa** novomapa(int alt, int lar) {
           (i % 2 == 0 && j % 2 == 0)) m[i][j].info = PAREDE;
       else if ((i + 1 > ESPACOLIVRE || j + 1 > ESPACOLIVRE) && (i + ESPACOLIVRE < alt || j + ESPACOLIVRE < lar))
         m[i][j].aleatorio();
+      else m[i][j].info = AR;
   return m;
 }
